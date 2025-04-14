@@ -1,0 +1,66 @@
+// _base.scss
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+// 1. Set the base font family (works well with Tailwind)
+body {
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+  color: #1e293b; // slate-800
+  background-color: #f9fafb; // gray-50
+}
+
+// 2. Headings
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 600;
+  line-height: 1.2;
+  color: #0f172a; // slate-900
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 2.25rem; // ~36px
+}
+
+h2 {
+  font-size: 1.875rem; // ~30px
+}
+
+h3 {
+  font-size: 1.5rem; // ~24px
+}
+
+h4 {
+  font-size: 1.25rem; // ~20px
+}
+
+h5 {
+  font-size: 1rem; // ~16px
+}
+
+// 3. Paragraphs & inline
+p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+span {
+  font-size: 1rem;
+}
+
+// 4. Links
+a {
+  color: #2563eb; // blue-600
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}

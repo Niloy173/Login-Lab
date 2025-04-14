@@ -1,0 +1,1 @@
+# Singleton services & core modules (e.g., auth service, interceptors)

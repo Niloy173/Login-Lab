@@ -1,0 +1,77 @@
+<nav id="navbar">
+  <div class="logo"><a routerLink="/">LOGIN LAB</a></div>
+</nav>
+
+<div class="" id="login_section">
+  <div id="firstContent" class="content">
+    <div id="register1" class="registartion_page">
+      <h2>Sign in To Your Account</h2>
+      <p>Required Information</p>
+
+      <form
+        class="LoginFrom"
+        #ngTemplateForm="ngForm"
+        (submit)="submitForm($event, ngTemplateForm)"
+      >
+        <!-- 
+        <label>
+          <span
+            id="msg"
+            style="
+              color: rgb(238, 0, 0);
+              margin: 1em 0;
+              padding: 0px 10px 25px 30px;
+              font-weight: bold;
+            "
+            ></span
+          >
+          <br />
+          <br />
+        </label> -->
+
+        <label for="Email"><b class="email">Email Address</b></label>
+        <input
+          class="emailclass text"
+          type="text"
+          placeholder="Enter Email Address"
+          name="uemail"
+          #userEmail="ngModel"
+          [(ngModel)]="credentials.email"
+          (ngModelChange)="checkValue($event)"
+          required
+        />
+
+        <label for="Password"><b class="pass">Password</b></label>
+        <input
+          class="passclass text"
+          type="password"
+          placeholder="Enter Password"
+          name="upassword"
+          #userPassword="ngModel"
+          [(ngModel)]="credentials.password"
+          (ngModelChange)="checkValue($event)"
+          required
+        />
+
+        <div class="submit">
+          <button [disabled]="ngTemplateForm.invalid" type="submit">
+            Login
+          </button>
+        </div>
+        <div class="container">
+          <span class=""><a href="/reset">Forget Password ?</a></span>
+        </div>
+      </form>
+    </div>
+
+    <div id="another1" class="another_page">
+      <h2 id="no_account">Don't Have a account ?</h2>
+
+      <p id="sign_in_reg">Register For free and start your jourey</p>
+
+      <button id="register_btn">
+        <a routerLink="/register">Register for free</a>
+      </button>
+    </div>
+  </div>
+</div>

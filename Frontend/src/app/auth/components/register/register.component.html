@@ -1,0 +1,87 @@
+<nav id="navbar">
+  <div class="logo"><a routerLink="/">LOGIN LAB</a></div>
+</nav>
+
+<div class="" id="register_section">
+  <div id="secondContent" class="content_clone">
+    <div id="register2" class="register_page_clone">
+      <h2>Create Your Account</h2>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa temporibus
+        molestias consequatur ad voluptatem doloribus, perspiciatis quidem
+        dolorem ipsum fugiat corporis tempore iusto omnis est laboriosam labore
+        ducimus debitis. Iste!
+      </p>
+
+      <form
+        class="regFrom"
+        #ngTemplateForm="ngForm"
+        (submit)="submitForm($event, ngTemplateForm)"
+      >
+        <label for="name"><b class="name"> Name </b></label><br />
+        <input
+          id="uname"
+          type="text"
+          class="text"
+          placeholder="Enter Name"
+          minlength="5"
+          name="uname"
+          #userName="ngModel"
+          [(ngModel)]="userInfo.username"
+          (ngModelChange)="checkValue($event)"
+          required
+        />
+
+        <label for="Email"><b class="email">Email Address</b></label>
+        <input
+          class="emailclass text"
+          type="text"
+          placeholder="Enter Email Address"
+          name="uemail"
+          #userEmail="ngModel"
+          [(ngModel)]="userInfo.email"
+          (ngModelChange)="checkValue($event)"
+          required
+        />
+        <span class="emailspan">
+          we will send a link to your email for verification </span
+        ><br />
+
+        <br />
+
+        <label for="Password"><b class="pass"> Create a Password</b></label>
+        <input
+          class="passclass text"
+          type="password"
+          placeholder="Enter Password"
+          name="upassword"
+          #userPassword="ngModel"
+          [(ngModel)]="userInfo.password"
+          (ngModelChange)="checkValue($event)"
+          required
+        />
+        <span class="pass_span">
+          Your password should contain 8 character minimum
+        </span>
+
+        <br />
+        <br />
+        <br />
+
+        <div class="submit">
+          <button [disabled]="ngTemplateForm.invalid" type="submit">
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="another2" class="another_page_clone">
+      <h2 id="yes_account">Already Have a account ?</h2>
+
+      <p id="sign_in_p">Sign in and Continue your journey</p>
+
+      <button id="sign_in_btn"><a routerLink="/login">Sign in</a></button>
+    </div>
+  </div>
+</div>
