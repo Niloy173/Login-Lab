@@ -3,11 +3,14 @@ package com.example.loginLab.demo.config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.loginLab.demo.dto.UserDto;
 import com.example.loginLab.demo.entity.User;
 import com.example.loginLab.demo.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,45 +54,79 @@ public class UserAuthProvider {
     }
 
 
-    public Authentication validateToken(String token) {
+    public Authentication validateToken(String token, HttpServletRequest request) {
 
-        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        try {
 
-        JWTVerifier verifier = JWT.require(algorithm).build();
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-        DecodedJWT decoded = verifier.verify(token);
+            JWTVerifier verifier = JWT.require(algorithm).build();
 
-        UserDto user = UserDto.builder()
-                .email(decoded.getSubject())
-                .username(decoded.getClaim("username").asString())
-                .role(decoded.getClaim("role").asString())
-                .build();
+            DecodedJWT decoded = verifier.verify(token);
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+            UserDto user = UserDto.builder()
+                    .email(decoded.getSubject())
+                    .username(decoded.getClaim("username").asString())
+                    .role(decoded.getClaim("role").asString())
+                    .build();
 
-        return new UsernamePasswordAuthenticationToken(user,null, authorities);
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+            return new UsernamePasswordAuthenticationToken(user,null, authorities);
+        } catch (TokenExpiredException e) {
+            request.setAttribute("auth_error", "Token expired");
+        } catch (JWTVerificationException e) {
+            request.setAttribute("auth_error", "Invalid token");
+        } catch (Exception e) {
+            request.setAttribute("auth_error", "Authentication failed");
+        }
+
+        return null;
     }
 
-    public Authentication validateTokenStrongly(String token) {
+    public Authentication  validateTokenStrongly(String token, HttpServletRequest request) {
 
-        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+       try {
 
-        JWTVerifier verifier = JWT.require(algorithm).build();
+           Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-        DecodedJWT decoded = verifier.verify(token);
+           JWTVerifier verifier = JWT.require(algorithm).build();
 
-        Optional<User> singleUser = userRepository.findUserByEmail(decoded.getSubject());
+           DecodedJWT decoded = verifier.verify(token);
 
-        UserDto user = UserDto.builder()
-                .email(singleUser.get().getEmail())
-                .username(singleUser.get().getUsername())
-                .role(singleUser.get().getRole())
-                .build();
+           Optional<User> singleUser = userRepository.findUserByEmail(decoded.getSubject());
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+           UserDto user = UserDto.builder()
+                   .email(singleUser.get().getEmail())
+                   .username(singleUser.get().getUsername())
+                   .role(singleUser.get().getRole())
+                   .build();
 
-        return new UsernamePasswordAuthenticationToken(user,null,authorities);
+           List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+           return new UsernamePasswordAuthenticationToken(user,null,authorities);
+       }catch (TokenExpiredException e) {
+           request.setAttribute("auth_error", "Token expired");
+       } catch (JWTVerificationException e) {
+           request.setAttribute("auth_error", "Invalid token");
+       } catch (Exception e) {
+           request.setAttribute("auth_error", "Authentication failed");
+       }
+
+       return null;
     }
 
+    public Map<String,String> extractClaims(String token) {
+
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
+
+        Map<String,String> claims = new HashMap<>();
+        claims.put("email", decoded.getSubject());
+        claims.put("username", decoded.getClaim("username").asString());
+        claims.put("role", decoded.getClaim("role").asString());
+
+        return claims;
+    }
 
 }
