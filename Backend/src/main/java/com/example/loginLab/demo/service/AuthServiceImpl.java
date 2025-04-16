@@ -1,7 +1,9 @@
 package com.example.loginLab.demo.service;
 
 import com.example.loginLab.demo.config.PasswordConfiguration;
+import com.example.loginLab.demo.config.UserAuthProvider;
 import com.example.loginLab.demo.dto.Credentials;
+import com.example.loginLab.demo.dto.LoginResponse;
 import com.example.loginLab.demo.dto.SignUpDto;
 import com.example.loginLab.demo.dto.UserDto;
 import com.example.loginLab.demo.entity.User;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordConfiguration passwordConfiguration;
+    private final UserAuthProvider userAuthProvider;
 
 
     @Override
@@ -67,7 +70,14 @@ public class AuthServiceImpl implements AuthService{
 
             UserDto userDto = userMapper.entityToDto(user.get());
 
-            return new ApiResponse<>("success", "Login successful", userDto, null);
+            LoginResponse loginResponse = new LoginResponse(
+                    userDto.getUserid(),
+                    userDto.getRole(),
+                    userAuthProvider.createToken(userDto)
+
+            );
+
+            return new ApiResponse<>("success", "Login successful", loginResponse, null);
         }
 
         throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
