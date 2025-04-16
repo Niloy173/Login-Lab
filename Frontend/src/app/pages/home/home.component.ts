@@ -50,14 +50,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         catchError((err) => {
           return [];
         }),
-        tap((res: User[]) => {
-          this.allUsers = [...this.allUsers, ...res];
-          const firstTimeFormate = res.slice(
+        tap((res: any) => {
+          const data = res?.data || [];
+
+          this.allUsers = [...this.allUsers, ...data];
+          const firstTimeFormate = data.slice(
             this.currentIndex,
             this.currentIndex + this.batchSize
           );
           this.userSubject$.next(
-            firstTimeFormate.map((user) => new User(user))
+            firstTimeFormate.map((user: any) => new User(user))
           );
         }),
         finalize(() => {

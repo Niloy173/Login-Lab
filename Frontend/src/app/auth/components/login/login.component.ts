@@ -24,13 +24,17 @@ export class LoginComponent {
 
   submitForm(e: Event, form: NgForm) {
     e.preventDefault();
-    console.log(this.credentials);
+    //console.log(this.credentials);
 
     this.authService
       .login(this.credentials)
       .pipe(
-        tap((res) => {
+        tap((res: any) => {
           console.log(res);
+          const { userId, role, token } = res?.data || {};
+
+          this.tokenService.saveUser({ userId, role, token });
+          this.router.navigate(['/home']);
         }),
         finalize(() => {
           this.resetForm(form);
