@@ -1,5 +1,6 @@
 package com.example.loginLab.demo.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,9 @@ public class UserDto {
     private Long userid;
     private String username;
     private String email;
+    @JsonIgnore
     private String password;
     private String role;
-    private String token;
     private Timestamp createdDate;
 
     public String getName() {
