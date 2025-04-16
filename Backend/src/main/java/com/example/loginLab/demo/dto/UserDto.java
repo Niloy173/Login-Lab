@@ -21,4 +21,8 @@ public class UserDto {
     private String token;
     private Timestamp createdDate;
 
+    public String getName() {
+        return this.username;
+    }
+
 }

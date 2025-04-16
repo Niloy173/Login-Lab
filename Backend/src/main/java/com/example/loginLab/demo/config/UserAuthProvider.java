@@ -12,12 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -62,11 +61,13 @@ public class UserAuthProvider {
 
         UserDto user = UserDto.builder()
                 .email(decoded.getSubject())
-                .username(decoded.getClaim("username").toString())
-                .role(decoded.getClaim("role").toString())
+                .username(decoded.getClaim("username").asString())
+                .role(decoded.getClaim("role").asString())
                 .build();
 
-        return new UsernamePasswordAuthenticationToken(user,null, Collections.emptyList());
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+        return new UsernamePasswordAuthenticationToken(user,null, authorities);
     }
 
     public Authentication validateTokenStrongly(String token) {
@@ -85,7 +86,9 @@ public class UserAuthProvider {
                 .role(singleUser.get().getRole())
                 .build();
 
-        return new UsernamePasswordAuthenticationToken(user,null,Collections.emptyList());
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+        return new UsernamePasswordAuthenticationToken(user,null,authorities);
     }
 
 
