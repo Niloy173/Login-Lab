@@ -1,6 +1,6 @@
 package com.example.loginLab.demo.service;
 
-import com.example.loginLab.demo.config.PasswordEncoderConfiguration;
+import com.example.loginLab.demo.config.PasswordConfiguration;
 import com.example.loginLab.demo.dto.Credentials;
 import com.example.loginLab.demo.dto.SignUpDto;
 import com.example.loginLab.demo.dto.UserDto;
@@ -24,7 +24,7 @@ public class AuthServiceImpl implements AuthService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoderConfiguration encoderConfiguration;
+    private final PasswordConfiguration passwordConfiguration;
 
 
     @Override
@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService{
 
         convertedUser.setUsername(signUpDto.username());
         convertedUser.setEmail(signUpDto.email());
-        convertedUser.setPassword(encoderConfiguration.passwordEncoder().encode(CharBuffer.wrap(signUpDto.password())));
+        convertedUser.setPassword(passwordConfiguration.passwordEncoder().encode(CharBuffer.wrap(signUpDto.password())));
         convertedUser.setRole(signUpDto.role());
 
         User user = userMapper.dtoToEntity(convertedUser);
@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService{
             throw new AppException("Invalid user", HttpStatus.NOT_FOUND);
         }
 
-        if(encoderConfiguration.passwordEncoder().matches(CharBuffer.wrap(credentials.password()),
+        if(passwordConfiguration.passwordEncoder().matches(CharBuffer.wrap(credentials.password()),
                 user.get().getPassword())) {
 
             UserDto userDto = userMapper.entityToDto(user.get());
