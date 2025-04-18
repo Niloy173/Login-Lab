@@ -1,20 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { canActivateChildGuard } from '../core/guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
-    // canActivateChild: [canActivateChildGuard],
+    canActivateChild: [canActivateChildGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
 
       {
         path: 'home',
-        component: HomeComponent,
-        data: { title: 'Home' },
+        loadChildren: () =>
+          import('./home/home.module').then((m) => m.HomeModule),
       },
 
       {

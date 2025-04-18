@@ -3,11 +3,10 @@ import { NgModule } from '@angular/core';
 
 import { LayoutModule } from '../layout/layout.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { HomeComponent } from './home/home.component';
 import { PageRoutingModule } from './page-routing.module';
 
 @NgModule({
-  declarations: [DashboardComponent, HomeComponent],
+  declarations: [DashboardComponent],
   imports: [CommonModule, LayoutModule, PageRoutingModule],
 })
 export class PageModule {}
