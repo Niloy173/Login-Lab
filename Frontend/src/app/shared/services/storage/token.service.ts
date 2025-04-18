@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import * as CryptoJS from 'crypto-js';
+import { jwtDecode } from 'jwt-decode';
 import { APP_SERVICE_CONFIG } from '../injection/appConfig.service';
 import { AppConfig } from '../interface/AppConfig';
 
-const SAVED_KEY = 'auth-data';
+const AUTH_TOKEN_KEY = '_ll_uu_t';
 
 @Injectable({
   providedIn: 'root',
@@ -15,33 +15,46 @@ export class TokenService {
     this.SECRET_KEY = appConfigService.secretKey;
   }
 
-  saveUser(data: { userId: number; role: string; token: string }): void {
-    const encrypted = CryptoJS.AES.encrypt(
-      JSON.stringify(data),
-      this.SECRET_KEY
-    ).toString();
-
-    localStorage.setItem(SAVED_KEY, encrypted);
+  saveUser(data: { token: string }): void {
+    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
   }
 
-  getUser(): { userId: number; role: string; token: string } | null {
-    const encrypted = localStorage.getItem(SAVED_KEY);
-    if (!encrypted) return null;
+  getUser(): { userid: number; role: string; token: string } | null {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
 
-    try {
-      const decrypted = CryptoJS.AES.decrypt(
-        encrypted,
-        this.SECRET_KEY
-      ).toString(CryptoJS.enc.Utf8);
-      return JSON.parse(decrypted);
-    } catch (error) {
-      return null;
-    }
+    if (!token) return null;
+
+    const user: any = {};
+    const decodedTokenInfo = jwtDecode(token);
+
+    const { userid, role, username } = decodedTokenInfo as {
+      userid: number;
+      role: string;
+      username: string;
+    };
+
+    user.userid = userid;
+    user.role = role;
+    user.username = username;
+    user.token = token;
+
+    return user;
   }
 
   getToken(): string | null {
     const user = this.getUser();
+    console.log('getToken', user);
     return user?.token || null;
+  }
+
+  getUserId(): number | null {
+    const user = this.getUser();
+    return user?.userid || null;
+  }
+
+  getUserRole(): string | null {
+    const user = this.getUser();
+    return user?.role || null;
   }
 
   // Save token to localStorage
@@ -60,7 +73,7 @@ export class TokenService {
   // }
 
   removeToken(): void {
-    localStorage.removeItem(SAVED_KEY);
+    localStorage.removeItem(AUTH_TOKEN_KEY);
   }
 
   // Optional: check if user is logged in
