@@ -47,6 +47,7 @@ public class UserAuthProvider {
                 .withSubject(user.getEmail())
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
+                .withClaim("userid", user.getUserid())
                 .withClaim("username", user.getUsername())
                 .withClaim("role", user.getRole())
                 .sign(algorithm);
@@ -66,6 +67,7 @@ public class UserAuthProvider {
 
             UserDto user = UserDto.builder()
                     .email(decoded.getSubject())
+                    .userid(decoded.getClaim("userid").asLong())
                     .username(decoded.getClaim("username").asString())
                     .role(decoded.getClaim("role").asString())
                     .build();
@@ -97,6 +99,7 @@ public class UserAuthProvider {
            Optional<User> singleUser = userRepository.findUserByEmail(decoded.getSubject());
 
            UserDto user = UserDto.builder()
+                   .userid(singleUser.get().getUserid())
                    .email(singleUser.get().getEmail())
                    .username(singleUser.get().getUsername())
                    .role(singleUser.get().getRole())

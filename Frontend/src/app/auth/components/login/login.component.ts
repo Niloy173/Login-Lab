@@ -31,9 +31,9 @@ export class LoginComponent {
       .pipe(
         tap((res: any) => {
           console.log(res);
-          const { userId, role, token } = res?.data || {};
+          const { token } = res?.data || {};
 
-          this.tokenService.saveUser({ userId, role, token });
+          this.tokenService.saveUser({ token });
           this.router.navigate(['/home']);
         }),
         finalize(() => {

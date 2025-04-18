@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { canActivateRedirectGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -7,6 +8,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./auth/components/login/login.module').then((m) => m.LoginModule),
     data: { title: 'Login' },
+    canActivate: [canActivateRedirectGuard],
   },
 
   {
@@ -16,6 +18,7 @@ const routes: Routes = [
         (m) => m.RegisterModule
       ),
     data: { title: 'Register' },
+    canActivate: [canActivateRedirectGuard],
   },
 
   {
