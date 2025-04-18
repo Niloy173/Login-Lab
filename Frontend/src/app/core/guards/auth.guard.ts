@@ -32,3 +32,15 @@ export const canActivateChildGuard: CanActivateChildFn = (route, state) => {
     return false;
   }
 };
+
+export const canActivateRedirectGuard: CanActivateFn = (route, state) => {
+  const tokenService = inject(TokenService);
+  const router = inject(Router);
+
+  if (tokenService.isLoggedIn()) {
+    router.navigate(['/home']);
+    return false;
+  } else {
+    return true;
+  }
+};
