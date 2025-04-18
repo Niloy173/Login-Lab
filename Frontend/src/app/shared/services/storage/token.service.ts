@@ -9,11 +9,7 @@ const AUTH_TOKEN_KEY = '_ll_uu_t';
   providedIn: 'root',
 })
 export class TokenService {
-  private SECRET_KEY: string;
-
-  constructor(@Inject(APP_SERVICE_CONFIG) appConfigService: AppConfig) {
-    this.SECRET_KEY = appConfigService.secretKey;
-  }
+  constructor(@Inject(APP_SERVICE_CONFIG) appConfigService: AppConfig) {}
 
   saveUser(data: { token: string }): void {
     localStorage.setItem(AUTH_TOKEN_KEY, data.token);
