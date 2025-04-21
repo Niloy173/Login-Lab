@@ -7,10 +7,14 @@ import com.example.loginLab.demo.mapper.UserMapper;
 import com.example.loginLab.demo.repository.UserRepository;
 import com.example.loginLab.demo.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,7 +29,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public ApiResponse<Object> getAllUsers() {
 
-
         List<UserDto> users = userRepository.findAll()
                 .stream()
                 .map(userMapper::entityToDto)
@@ -36,6 +39,32 @@ public class UserServiceImpl implements UserService{
         }
 
         ApiResponse<Object> response = new ApiResponse<>("success", "Users found", users, null);
+        return response;
+    }
+
+    @Override
+    public ApiResponse<Object> getAllUsersChunkData(Pageable pageable) {
+
+        Page<User> data = userRepository.findAll(pageable);
+
+        if(data.isEmpty()) {
+            return new ApiResponse<>("success", "No users found", null, null);
+        }
+
+
+        List<UserDto> users = data.getContent()
+                .stream()
+                .map(userMapper::entityToDto)
+                .toList();
+
+
+
+        Map<String,Object> metaData = new HashMap<>();
+        metaData.put("currentPage", data.getNumber());
+        metaData.put("totalItems", data.getTotalElements());
+        metaData.put("totalPages", data.getTotalPages());
+
+        ApiResponse<Object> response = new ApiResponse<>("success", "Users found", users, metaData);
         return response;
 
     }
