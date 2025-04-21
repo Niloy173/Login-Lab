@@ -8,6 +8,16 @@
       [class.active]="homeLA.isActive"
       >Home</a
     >
+
+    <a
+      routerLink="/users"
+      routerLinkActive="active"
+      #userRLA="routerLinkActive"
+      [class.active]="userRLA.isActive"
+      class="ml-4"
+      >Users</a
+    >
+
     <a
       *ngIf="AUTH_STATUS === 'UNAUTHORIZED'"
       routerLink="/login"
