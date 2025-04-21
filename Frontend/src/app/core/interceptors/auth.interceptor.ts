@@ -17,15 +17,16 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const token = this.tokenService.getToken();
+    // const token = this.tokenService.getToken();
 
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
+    // if (token) {
+    request = request.clone({
+      // setHeaders: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+      withCredentials: true, // Important for sending cookies
+    });
+    // }
 
     return next.handle(request).pipe(
       catchError((error) => {
@@ -34,15 +35,16 @@ export class AuthInterceptor implements HttpInterceptor {
           console.error('Unauthorized request:', error);
           this.tokenService.removeToken(); // Remove token on 401 error
           this.router.navigate(['/login']); // Redirect to login page
-        } else if (error.status === 403) {
-          // Handle forbidden error
-          console.error('Forbidden request:', error);
-          alert('You do not have permission to access this resource.');
-        } else {
-          // Handle other errors
-          console.error('HTTP error:', error);
-          alert('An error occurred. Please try again later.');
         }
+        // } else if (error.status === 403) {
+        //   // Handle forbidden error
+        //   console.error('Forbidden request:', error);
+        //   alert('You do not have permission to access this resource.');
+        // } else {
+        //   // Handle other errors
+        //   console.error('HTTP error:', error);
+        //   alert('An error occurred. Please try again later.');
+        // }
         throw error; // Rethrow the error to propagate it further
       })
     );
