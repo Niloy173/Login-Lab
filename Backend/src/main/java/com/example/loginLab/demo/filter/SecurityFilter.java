@@ -1,5 +1,6 @@
 package com.example.loginLab.demo.filter;
 
+import com.example.loginLab.demo.config.AppSecurityProperties;
 import com.example.loginLab.demo.config.UserAuthProvider;
 import com.example.loginLab.demo.exception.securityException.CustomAccessDeniedHandler;
 import com.example.loginLab.demo.exception.securityException.CustomAuthenticationEntryPoint;
@@ -29,6 +30,7 @@ public class SecurityFilter {
     private String allowedOrigins;
 
     private final UserAuthProvider userAuthProvider;
+    private final AppSecurityProperties appSecurityProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +39,7 @@ public class SecurityFilter {
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(customizer -> customizer.configurationSource(corsConfigurationSource()))
-                .addFilterBefore(new JwtFilter(userAuthProvider), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(userAuthProvider,appSecurityProperties), BasicAuthenticationFilter.class)
                 /* no need to handle session as stateless */
                 .authorizeHttpRequests(
                         request -> request
@@ -45,6 +47,7 @@ public class SecurityFilter {
                                         "/auth/register",
                                         "/auth/login"
                                 ).permitAll()
+                                .requestMatchers("/user/all/data").hasAuthority("admin")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

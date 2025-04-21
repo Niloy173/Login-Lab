@@ -1,0 +1,8 @@
+<div
+  class="error-message flex justify-center items-center w-full h-[50vh]"
+  *ngIf="errorData?.message"
+>
+  <p class="alert alert-danger">
+    {{ errorData?.status }} : {{ errorData?.message }}
+  </p>
+</div>

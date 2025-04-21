@@ -15,7 +15,9 @@ export class UserService {
   ) {}
 
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.appServiceConfig.apiUrl}/user/all`);
+    return this.http.get<User[]>(
+      `${this.appServiceConfig.apiUrl}/user/all/data`
+    );
   }
 
   private handleError(errorResponse: HttpErrorResponse) {

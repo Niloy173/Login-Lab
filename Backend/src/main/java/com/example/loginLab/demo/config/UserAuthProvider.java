@@ -9,10 +9,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.loginLab.demo.dto.UserDto;
 import com.example.loginLab.demo.entity.User;
 import com.example.loginLab.demo.repository.UserRepository;
+import com.example.loginLab.demo.util.Utils;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,20 +27,23 @@ import java.util.*;
 public class UserAuthProvider {
 
     private final UserRepository userRepository;
+    private final AppSecurityProperties appSecurityProperties;
+    private final Utils utils;
 
-    @Value("${security.jwt.token.secret-key}")
+
+//    @Value("${security.jwt.token.secret-key}")
     private String secretKey;
 
     @PostConstruct()
     protected void init() {
         // this is to avoid having the raw secret key available in the JVM
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        secretKey = Base64.getEncoder().encodeToString(appSecurityProperties.getJwtSecret().getBytes());
     }
 
     public String createToken(UserDto user) {
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 600000); // 10 minute
+        Date validity = new Date(now.getTime() + appSecurityProperties.getJwtExpirationInMs()); // 10 minute
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
@@ -55,7 +59,10 @@ public class UserAuthProvider {
     }
 
 
-    public Authentication validateToken(String token, HttpServletRequest request) {
+    public Authentication validateToken(
+            String token,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         try {
 
@@ -76,6 +83,7 @@ public class UserAuthProvider {
 
             return new UsernamePasswordAuthenticationToken(user,null, authorities);
         } catch (TokenExpiredException e) {
+            utils.clearCookie(response,appSecurityProperties.getTokenCookieName());
             request.setAttribute("auth_error", "Token expired");
         } catch (JWTVerificationException e) {
             request.setAttribute("auth_error", "Invalid token");
@@ -86,7 +94,7 @@ public class UserAuthProvider {
         return null;
     }
 
-    public Authentication  validateTokenStrongly(String token, HttpServletRequest request) {
+    public Authentication  validateTokenStrongly(String token, HttpServletRequest request, HttpServletResponse response) {
 
        try {
 
@@ -109,6 +117,7 @@ public class UserAuthProvider {
 
            return new UsernamePasswordAuthenticationToken(user,null,authorities);
        }catch (TokenExpiredException e) {
+           utils.clearCookie(response,appSecurityProperties.getTokenCookieName());
            request.setAttribute("auth_error", "Token expired");
        } catch (JWTVerificationException e) {
            request.setAttribute("auth_error", "Invalid token");
@@ -119,17 +128,26 @@ public class UserAuthProvider {
        return null;
     }
 
-    public Map<String,String> extractClaims(String token) {
+    public Map<String,Object> extractClaims(String token) {
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
 
-        Map<String,String> claims = new HashMap<>();
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("userid", decoded.getClaim("userid").asLong());
         claims.put("email", decoded.getSubject());
         claims.put("username", decoded.getClaim("username").asString());
         claims.put("role", decoded.getClaim("role").asString());
 
         return claims;
     }
+
+    public Long extractUserId(String token) {
+
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
+        return decoded.getClaim("userid").asLong();
+    }
+
 
 }
