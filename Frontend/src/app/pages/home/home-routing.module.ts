@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { canActivateGuard } from 'src/app/core/guards/auth.guard';
 import { HomeComponent } from './home.component';
 
 const routes: Routes = [
@@ -9,7 +8,7 @@ const routes: Routes = [
     path: '',
     component: HomeComponent,
     data: { title: 'home' },
-    canActivate: [canActivateGuard],
+    // canActivate: [canActivateGuard],
   },
 ];
 

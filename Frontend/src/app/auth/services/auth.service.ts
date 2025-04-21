@@ -20,6 +20,18 @@ export class AuthService {
     @Inject(APP_SERVICE_CONFIG) private appConfigService: AppConfig
   ) {}
 
+  logOut(): Observable<any> {
+    return this.http
+      .get<any>(`${this.appConfigService.apiUrl}/auth/logout`)
+      .pipe(catchError(this.handleError));
+  }
+
+  profile(): Observable<any> {
+    return this.http
+      .get<any>(`${this.appConfigService.apiUrl}/auth/profile`)
+      .pipe(catchError(this.handleError));
+  }
+
   register(user: User): Observable<any> {
     return this.http
       .post<any>(`${this.appConfigService.apiUrl}/auth/register`, user)
