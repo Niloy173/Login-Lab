@@ -22,8 +22,4 @@ public class UserDto {
     private String role;
     private Timestamp createdDate;
 
-    public String getName() {
-        return this.username;
-    }
-
 }
