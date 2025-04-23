@@ -44,6 +44,8 @@ public class SecurityFilter {
                 .authorizeHttpRequests(
                         request -> request
                                 .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",// Needed for some static assets
                                         "/auth/register",
                                         "/auth/login"
                                 ).permitAll()
