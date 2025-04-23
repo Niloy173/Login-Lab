@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, SkipSelf } from '@angular/core';
+import { Router } from '@angular/router';
+import { TokenService } from 'src/app/shared/services/storage/token.service';
 
 @Component({
   selector: 'app-home',
@@ -7,4 +9,17 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
   // Nothing to do here right now, but this is the main component for the home page
+
+  constructor(
+    private router: Router,
+    @SkipSelf() private tokenService: TokenService
+  ) {}
+
+  redirectProfile(): void {
+    if (this.tokenService.isLoggedIn()) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
 }

@@ -11,7 +11,9 @@ body {
   font-family: "Inter", sans-serif;
   line-height: 1.6;
   color: #1e293b; // slate-800
-  background-color: #f9fafb; // gray-50
+  // background-color: #f9fafb; // gray-50
+
+  background: radial-gradient(circle at top right, #f0f0ff, #fff0f5, #e0fff0);
 }
 
 // 2. Headings

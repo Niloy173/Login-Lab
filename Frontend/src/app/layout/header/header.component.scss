@@ -1,8 +1,10 @@
 .header {
   // overflow: hidden;
-  background-color: #f1f1f1;
-  padding: 20px 80px;
-  height: 5rem;
+  // background-color: #f1f1f1;
+  padding: 3.555rem 6.777rem;
+  height: 10rem;
+  display: flex;
+  justify-content: center;
 }
 
 .header a {
@@ -22,7 +24,7 @@
 }
 
 .header a:hover {
-  background-color: #ddd;
+  // background-color: #ddd;
   color: black;
 }
 

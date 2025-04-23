@@ -1,0 +1,9 @@
+.icon-display {
+  transform: scale(0.99);
+  transition: transform 0.3s ease-in-out;
+  margin: 0 auto;
+}
+
+.github_action:hover .icon-display {
+  font-weight: bold;
+}

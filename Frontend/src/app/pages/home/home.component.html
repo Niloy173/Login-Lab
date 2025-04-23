@@ -1,1 +1,43 @@
-<p>home works!</p>
+<div
+  class="min-h-[60vh] flex flex-col justify-center items-center text-center px-4"
+>
+  <h1
+    class="text-4xl md:text-3xl font-semibold leading-tight my-[4rem] bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text"
+  >
+    LoginLab
+  </h1>
+
+  <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
+    Create Profile<br />
+    <span class="text-black md:text-5xl">link user creation for free.</span>
+  </h1>
+
+  <p class="text-gray-600 mt-4 text-2xl max-w-auto">
+    LoginLab is an open platform for any people.
+  </p>
+
+  <div class="flex flex-col sm:flex-row gap-4 mt-[4rem]">
+    <a
+      (click)="redirectProfile()"
+      class="bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition cursor-pointer hover:no-underline"
+    >
+      Create your profile
+    </a>
+    <a
+      href="https://github.com/Niloy173/Login-Lab"
+      target="_blank"
+      class="flex items-center gap-2 border border-black px-6 py-3 rounded-xl font-semibold shadow hover:bg-gray-100 hover:no-underline transition github_action"
+    >
+      <mat-icon title="Checkout Github" color="primary" class="icon-display"
+        >arrow_forward</mat-icon
+      >
+      Checkout Github
+    </a>
+  </div>
+
+  <a
+    [routerLink]="'/home'"
+    class="text-sm text-gray-700 underline hover:text-black mt-8"
+    >Documentation Tweet →</a
+  >
+</div>
