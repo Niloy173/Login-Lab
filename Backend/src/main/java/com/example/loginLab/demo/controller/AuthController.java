@@ -6,14 +6,16 @@ import com.example.loginLab.demo.dto.LoginResponse;
 import com.example.loginLab.demo.dto.SignUpDto;
 import com.example.loginLab.demo.service.AuthService;
 import com.example.loginLab.demo.util.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,12 +25,6 @@ public class AuthController {
     private final AuthService authService;
     private final AppSecurityProperties appSecurityProperties;
 
-
-    @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<Object>> getUserProfile
-            (HttpServletRequest request) {
-        return ResponseEntity.ok(authService.fetchUserProfileInformation(request));
-    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Object>> registerNewUser(@Valid @RequestBody SignUpDto signUpDto) {
@@ -65,10 +61,5 @@ public class AuthController {
                         null));
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<ApiResponse<Object>> logOutUser
-            (HttpServletRequest request, HttpServletResponse response) {
-        authService.logOut(request, response);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Logout successful", null, null));
-    }
+
 }

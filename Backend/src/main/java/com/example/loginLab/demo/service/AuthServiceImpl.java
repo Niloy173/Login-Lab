@@ -13,8 +13,6 @@ import com.example.loginLab.demo.mapper.UserMapper;
 import com.example.loginLab.demo.repository.UserRepository;
 import com.example.loginLab.demo.util.ApiResponse;
 import com.example.loginLab.demo.util.Utils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -89,43 +87,5 @@ public class AuthServiceImpl implements AuthService{
         }
 
         throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
-    }
-
-    @Override
-    public ApiResponse<Object> fetchUserProfileInformation(HttpServletRequest request) {
-
-        String token = Utils.getCookie(request,appSecurityProperties.getTokenCookieName());
-
-        if(token == null) {
-            throw new AppException("Header not valid", HttpStatus.BAD_REQUEST);
-        }
-
-        Long userId = userAuthProvider.extractUserId(token);
-
-        Optional<User> findUser = userRepository.findUserByUserid(userId);
-
-        if(findUser.isEmpty()) {
-            throw new AppException("User not found", HttpStatus.NOT_FOUND);
-        }
-
-        UserDto userDto = userMapper.entityToDto(findUser.get());
-        log.info("userDto {}", userDto);
-
-        ApiResponse<Object> response = new ApiResponse<>("success", "User found", userDto, null);
-
-        return response;
-
-    }
-
-    @Override
-    public void logOut(HttpServletRequest request, HttpServletResponse response) {
-
-        String token = Utils.getCookie(request,appSecurityProperties.getTokenCookieName());
-
-        if(token == null) {
-            throw new AppException("Header not valid", HttpStatus.BAD_REQUEST);
-        }
-
-        utils.clearCookie(response,appSecurityProperties.getTokenCookieName());
     }
 }
