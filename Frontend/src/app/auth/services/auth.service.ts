@@ -46,6 +46,12 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
+  checkAuthStatus(): Observable<any> {
+    return this.http
+      .get<any>(`${this.appConfigService.apiUrl}/auth/check`)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(errorResponse: HttpErrorResponse) {
     if (errorResponse.error instanceof ErrorEvent) {
       console.error('Client Side Error: ', errorResponse.error);

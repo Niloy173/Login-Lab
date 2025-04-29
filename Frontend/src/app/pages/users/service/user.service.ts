@@ -2,8 +2,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { User } from 'src/app/auth/model/User';
-import { APP_SERVICE_CONFIG } from '../injection/appConfig.service';
-import { AppConfig } from '../interface/AppConfig';
+import { APP_SERVICE_CONFIG } from 'src/app/shared/services/injection/appConfig.service';
+import { AppConfig } from 'src/app/shared/services/interface/AppConfig';
 
 @Injectable({
   providedIn: 'root',

@@ -1,6 +1,9 @@
-<div class="header">
+<div class="header flex justify-between items-center">
   <!-- <a routerLink="/home" class="logo">{{ APP_NAME }}</a> -->
-  <div class="header-right">
+  <div
+    class="header-right flex justify-center items-center flex-1"
+    [ngClass]="{ 'md:ml-[3rem]': AUTH_STATUS === 'AUTHORIZED' }"
+  >
     <a
       routerLink="/home"
       routerLinkActive="active"
@@ -27,40 +30,41 @@
       class="ml-4"
       >Login</a
     >
-    <div
-      *ngIf="AUTH_STATUS === 'AUTHORIZED'"
-      class="relative inline-block ml-4"
-      (mouseenter)="showDropdown = true"
-      (mouseleave)="showDropdown = false"
-    >
-      <!-- Profile Image -->
-      <img
-        src="assets/profile-placeholder.png"
-        alt="Profile"
-        class="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
-      />
+  </div>
 
-      <!-- Dropdown -->
-      <div
-        *ngIf="showDropdown"
-        class="absolute right-0 mt-[.05rem] w-32 bg-white border border-gray-200 rounded shadow-lg z-50"
+  <div
+    *ngIf="AUTH_STATUS === 'AUTHORIZED'"
+    class="relative inline-block ml-4"
+    (mouseenter)="showDropdown = true"
+    (mouseleave)="showDropdown = false"
+  >
+    <!-- Profile Image -->
+    <img
+      src="assets/profile-placeholder.png"
+      alt="Profile"
+      class="w-10 h-10 rounded-full cursor-pointer border border-gray-300"
+    />
+
+    <!-- Dropdown -->
+    <div
+      *ngIf="showDropdown"
+      class="absolute right-0 mt-[.05rem] w-32 bg-white border border-gray-200 rounded shadow-lg z-50"
+    >
+      <a
+        routerLink="/profile"
+        routerLinkActive="active"
+        #profileRLA="routerLinkActive"
+        [class.active]="profileRLA.isActive"
+        class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 w-full"
       >
-        <a
-          routerLink="/profile"
-          routerLinkActive="active"
-          #profileRLA="routerLinkActive"
-          [class.active]="profileRLA.isActive"
-          class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 w-full"
-        >
-          Profile
-        </a>
-        <a
-          (click)="logout()"
-          class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 w-full"
-        >
-          Sign Out
-        </a>
-      </div>
+        Profile
+      </a>
+      <a
+        (click)="logout()"
+        class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700 w-full cursor-pointer"
+      >
+        Sign Out
+      </a>
     </div>
   </div>
 </div>

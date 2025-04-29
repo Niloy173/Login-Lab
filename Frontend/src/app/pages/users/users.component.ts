@@ -16,7 +16,7 @@ import {
   tap,
 } from 'rxjs';
 import { User } from 'src/app/auth/model/User';
-import { UserService } from 'src/app/shared/services/user/user.service';
+import { UserService } from './service/user.service';
 
 @Component({
   selector: 'app-users',
