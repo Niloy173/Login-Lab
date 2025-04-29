@@ -2,8 +2,6 @@ package com.example.loginLab.demo.controller;
 
 import com.example.loginLab.demo.service.UserService;
 import com.example.loginLab.demo.util.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
-    @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<Object>> getUserProfile
-            (HttpServletRequest request) {
-        return ResponseEntity.ok(userService.fetchUserProfileInformation(request));
-    }
 
 
     @GetMapping("/all")
@@ -43,10 +35,4 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<ApiResponse<Object>> logOutUser
-            (HttpServletRequest request, HttpServletResponse response) {
-        userService.logOut(request, response);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Logout successful", null, null));
-    }
 }

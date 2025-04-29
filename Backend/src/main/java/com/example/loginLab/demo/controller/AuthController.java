@@ -6,24 +6,41 @@ import com.example.loginLab.demo.dto.LoginResponse;
 import com.example.loginLab.demo.dto.SignUpDto;
 import com.example.loginLab.demo.service.AuthService;
 import com.example.loginLab.demo.util.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
+    //private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
     private final AppSecurityProperties appSecurityProperties;
+
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkAuthStatus(Authentication authentication) {
+        // Just return 200 OK if token is valid and user is authenticated
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(true); // or even ResponseEntity.ok().build()
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<Object>> getUserProfile
+            (HttpServletRequest request) {
+        return ResponseEntity.ok(authService.fetchUserProfileInformation(request));
+    }
 
 
     @PostMapping("/register")
@@ -61,5 +78,11 @@ public class AuthController {
                         null));
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<ApiResponse<Object>> logOutUser
+            (HttpServletRequest request, HttpServletResponse response) {
+        authService.logOut(request, response);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Logout successful", null, null));
+    }
 
 }
