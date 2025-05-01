@@ -1,7 +1,6 @@
 package com.example.loginLab.demo.service;
 
 import com.example.loginLab.demo.config.AppSecurityProperties;
-import com.example.loginLab.demo.config.PasswordConfiguration;
 import com.example.loginLab.demo.config.UserAuthProvider;
 import com.example.loginLab.demo.dto.Credentials;
 import com.example.loginLab.demo.dto.LoginResponse;
@@ -18,9 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.password.CompromisedPasswordChecker;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.CharBuffer;
 import java.util.Optional;
 
 @Service
@@ -30,7 +30,8 @@ public class AuthServiceImpl implements AuthService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordConfiguration passwordConfiguration;
+    private final PasswordEncoder passwordEncoder;
+    private final CompromisedPasswordChecker compromisedPasswordChecker;
     private final UserAuthProvider userAuthProvider;
     private final AppSecurityProperties appSecurityProperties;
     private final Utils utils;
@@ -41,22 +42,35 @@ public class AuthServiceImpl implements AuthService{
 
         log.info("Registering user: {}", signUpDto);
 
-//        if(userRepository.existsByUsername(signUpDto.username().toLowerCase())){
-//            throw new AppException("Username already registered", HttpStatus.CONFLICT);
-//        }
+        if(userRepository.existsByUsername(signUpDto.username().toLowerCase())){
+            throw new AppException("Username already registered", HttpStatus.CONFLICT);
+        }
 
         if(userRepository.existsByEmail(signUpDto.email())){
             throw new AppException("Email already registered", HttpStatus.CONFLICT);
         }
 
+        // Convert char[] to String for checking
+        String plainPassword = new String(signUpDto.password());
+
+        // Check if password is compromised
+        if(compromisedPasswordChecker.check(plainPassword).isCompromised()) {
+            throw new AppException("Password is compromised", HttpStatus.BAD_REQUEST);
+        }
+
         UserDto convertedUser = new UserDto();
+
 
         convertedUser.setUsername(signUpDto.username());
         convertedUser.setEmail(signUpDto.email());
-        convertedUser.setPassword(passwordConfiguration.passwordEncoder().encode(CharBuffer.wrap(signUpDto.password())));
+        convertedUser.setPassword(passwordEncoder.encode(plainPassword));
         convertedUser.setRole(signUpDto.role());
 
         User user = userMapper.dtoToEntity(convertedUser);
+
+        // set the user id from next val in sequence
+        user.setUserid(userRepository.getNextUserId());
+
         User savedUser = userRepository.save(user);
 
         return new ApiResponse<>("success", "User registered successfully", null, null);
@@ -71,8 +85,13 @@ public class AuthServiceImpl implements AuthService{
             throw new AppException("Invalid user", HttpStatus.NOT_FOUND);
         }
 
-        if(passwordConfiguration.passwordEncoder().matches(CharBuffer.wrap(credentials.password()),
-                user.get().getPassword())) {
+        // Convert char[] to String for checking
+        String plainPassword = new String(credentials.password());
+
+        /***
+         * passwordConfiguration.passwordEncoder().matches(CharBuffer.wrap(credentials.password()
+         */
+        if(passwordEncoder.matches(plainPassword, user.get().getPassword())) {
 
             UserDto userDto = userMapper.entityToDto(user.get());
 

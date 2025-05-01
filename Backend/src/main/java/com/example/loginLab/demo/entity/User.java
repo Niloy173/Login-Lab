@@ -16,9 +16,9 @@ import java.time.Instant;
 public class User {
 
     @Id
-    @GeneratedValue(generator="ap_user_seq")
-    @SequenceGenerator(name="ap_user_seq",
-            sequenceName="ap_user_seq", allocationSize=1)
+//    @GeneratedValue(generator="ap_user_seq")
+//    @SequenceGenerator(name="ap_user_seq",
+//            sequenceName="ap_user_seq", allocationSize=1)
     @Column(name = "user_id")
     private Long userid;
 
