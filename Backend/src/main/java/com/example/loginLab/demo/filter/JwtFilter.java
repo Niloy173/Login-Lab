@@ -95,7 +95,7 @@ public class JwtFilter extends OncePerRequestFilter {
                        if(principal instanceof UserDto user) {
                            request.setAttribute("userid", user.getUserid());
                            request.setAttribute("username", user.getUsername());
-                           request.setAttribute("email", user.getEmail());
+//                           request.setAttribute("email", user.getEmail());
                            request.setAttribute("role", user.getRole());
                        }
 

@@ -48,10 +48,10 @@ public class UserAuthProvider {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
         return JWT.create()
-                .withSubject(user.getEmail())
+                .withSubject(String.valueOf(user.getUserid()))
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
-                .withClaim("userid", user.getUserid())
+//                .withClaim("userid", user.getUserid())
                 .withClaim("username", user.getUsername())
                 .withClaim("role", user.getRole())
                 .sign(algorithm);
@@ -73,8 +73,9 @@ public class UserAuthProvider {
             DecodedJWT decoded = verifier.verify(token);
 
             UserDto user = UserDto.builder()
-                    .email(decoded.getSubject())
-                    .userid(decoded.getClaim("userid").asLong())
+//                    .email(decoded.getSubject())
+//                    .userid(decoded.getClaim("userid").asLong())
+                    .userid(Long.parseLong(decoded.getSubject()))
                     .username(decoded.getClaim("username").asString())
                     .role(decoded.getClaim("role").asString())
                     .build();
@@ -107,8 +108,8 @@ public class UserAuthProvider {
            Optional<User> singleUser = userRepository.findUserByEmail(decoded.getSubject());
 
            UserDto user = UserDto.builder()
-                   .userid(singleUser.get().getUserid())
-                   .email(singleUser.get().getEmail())
+                   .userid(Long.parseLong(decoded.getSubject()))
+//                   .email(singleUser.get().getEmail())
                    .username(singleUser.get().getUsername())
                    .role(singleUser.get().getRole())
                    .build();
@@ -134,8 +135,8 @@ public class UserAuthProvider {
         DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
 
         Map<String,Object> claims = new HashMap<>();
-        claims.put("userid", decoded.getClaim("userid").asLong());
-        claims.put("email", decoded.getSubject());
+        claims.put("userid", Long.parseLong(decoded.getSubject()));
+//        claims.put("email", decoded.getSubject());
         claims.put("username", decoded.getClaim("username").asString());
         claims.put("role", decoded.getClaim("role").asString());
 
@@ -146,7 +147,8 @@ public class UserAuthProvider {
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         DecodedJWT decoded = JWT.require(algorithm).build().verify(token);
-        return decoded.getClaim("userid").asLong();
+//        return decoded.getClaim("userid").asLong();
+        return Long.parseLong(decoded.getSubject());
     }
 
 
